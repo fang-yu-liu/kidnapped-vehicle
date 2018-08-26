@@ -22,14 +22,14 @@ using namespace std;
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	default_random_engine gen;
 
-  // Set the number of particles
+	// Set the number of particles
 	num_particles = 300;
 
 	double std_x = std[0];
 	double std_y = std[1];
 	double std_theta = std[2];
 
-  // Create normal (Gaussian) distributions for x, y and theta
+	// Create normal (Gaussian) distributions for x, y and theta
 	normal_distribution<double> dist_x(x, std_x);
 	normal_distribution<double> dist_y(y, std_y);
 	normal_distribution<double> dist_theta(theta, std_theta);
@@ -83,7 +83,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
-  // Find the predicted measurement that is closest to each observed measurement and assign the
+	// Find the predicted measurement that is closest to each observed measurement and assign the
 	//   observed measurement to this particular landmark.
 	for (auto &observation : observations) {
 		double dist_min = 1000.0;
@@ -95,11 +95,10 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 			}
 		}
 	}
-
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
-		const std::vector<LandmarkObs> &observations, const Map &map_landmarks) {
+	const std::vector<LandmarkObs> &observations, const Map &map_landmarks) {
 	// Update the weights of each particle using a mult-variate Gaussian distribution.
 	for (int i = 0; i < num_particles; i++) {
 		Particle& particle = particles[i];
@@ -111,14 +110,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		vector<double> sense_x;
 		vector<double> sense_y;
 
-    vector<LandmarkObs> observations_m; // Observations in MAP'S coordinate system
+		vector<LandmarkObs> observations_m; // Observations in MAP'S coordinate system
 		for (auto &observation : observations) {
 			LandmarkObs observation_m;
 			double x_c = observation.x;
 			double y_c = observation.y;
 
-      // Assign id for observation_m to -1 since it's not associated with any landmark yet
-      observation_m.id = -1;
+			// Assign id for observation_m to -1 since it's not associated with any landmark yet
+			observation_m.id = -1;
 			// Coordinate transform (rotation and translation)
 			// 	 Observations - VEHICLE'S coordinate system
 			//   Particles - MAP'S coordinate system
@@ -142,7 +141,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 		dataAssociation(predicted, observations_m);
 
-    double sig_x = std_landmark[0];
+		double sig_x = std_landmark[0];
 		double sig_y = std_landmark[1];
 		bool no_valid_associations = true;
 		for (auto &observation : observations_m) {
@@ -153,7 +152,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 				for (auto &map_landmark : map_landmarks.landmark_list) {
 					if (map_landmark.id_i == observation.id) {
 						double mu_x = map_landmark.x_f;
-					  double mu_y = map_landmark.y_f;
+						double mu_y = map_landmark.y_f;
 						// Calculate normalization term
 						double gauss_norm= (1/(2 * M_PI * sig_x * sig_y));
 						// Calculate exponent
@@ -193,16 +192,16 @@ void ParticleFilter::resample() {
 Particle ParticleFilter::SetAssociations(Particle& particle, const std::vector<int>& associations,
                                      const std::vector<double>& sense_x, const std::vector<double>& sense_y)
 {
-    // particle: the particle to assign each listed association, and association's (x,y) world coordinates mapping to
-    // associations: The landmark id that goes along with each listed association
-    // sense_x: the associations x mapping already converted to world coordinates
-    // sense_y: the associations y mapping already converted to world coordinates
+	// particle: the particle to assign each listed association, and association's (x,y) world coordinates mapping to
+	// associations: The landmark id that goes along with each listed association
+	// sense_x: the associations x mapping already converted to world coordinates
+	// sense_y: the associations y mapping already converted to world coordinates
 
-    particle.associations= associations;
-    particle.sense_x = sense_x;
-    particle.sense_y = sense_y;
+	particle.associations= associations;
+	particle.sense_x = sense_x;
+	particle.sense_y = sense_y;
 
-		return particle;
+	return particle;
 }
 
 string ParticleFilter::getAssociations(Particle best)
